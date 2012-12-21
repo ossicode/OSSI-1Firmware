@@ -1,0 +1,6 @@
+#Ignore Temporary Files#
+#################
+*.?#?
+
+Debug/
+Release/
