@@ -8,9 +8,9 @@
 #include "morse.h"
 
 
-//                       .    ,    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z
-const uint8_t code[38] ={0x15,0x33,0x1F,0x0F,0x07,0x03,0x01,0x00,0x10,0x18,0x1C,0x1E,0x01,0x08,0x0A,0x04,0x00,0x02,0x06,0x00,0x00,0x07,0x05,0x04,0x03,0x02,0x07,0x06,0x0D,0x02,0x00,0x01,0x01,0x01,0x03,0x09,0x0B,0x0C};
-const uint8_t size[38] ={6,6,5,5,5,5,5,5,5,5,5,5,2,4,4,3,1,4,3,4,2,4,3,4,2,2,3,4,4,3,3,1,3,4,3,4,4,4};
+//                      space .    ,    0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z
+const uint8_t code[39] ={0x00,0x15,0x33,0x1F,0x0F,0x07,0x03,0x01,0x00,0x10,0x18,0x1C,0x1E,0x01,0x08,0x0A,0x04,0x00,0x02,0x06,0x00,0x00,0x07,0x05,0x04,0x03,0x02,0x07,0x06,0x0D,0x02,0x00,0x01,0x01,0x01,0x03,0x09,0x0B,0x0C};
+const uint8_t size[39] ={4,6,6,5,5,5,5,5,5,5,5,5,5,2,4,4,3,1,4,3,4,2,4,3,4,2,2,3,4,4,3,3,1,3,4,3,4,4,4};
 
 static volatile uint8_t morse_send_flag = 0;
 
@@ -65,9 +65,15 @@ uint8_t morse_is_ready(void)
 	}
 }
 
-void morse_set_dataSizeFrom(uint8_t * bytes)
+uint16_t morse_set_dataSizeFrom(uint8_t * bytes)
 {
-	bytes_size = sizeof(bytes);
+	volatile uint16_t bytes_size = 0;
+	while(*bytes++)
+	{
+		bytes_size++;
+	}
+
+	return bytes_size;
 }
 
 void morse_init(uint8_t wpm)
@@ -109,10 +115,11 @@ void morse_send_bytes(uint8_t * bytes)
 	static volatile uint16_t bytes_cnt =0;
 	static volatile uint16_t dot_cnt =0;
 	static volatile uint8_t dot_sent = 0;
+	volatile uint16_t MAX_DATA_SIZE;
 
+	MAX_DATA_SIZE = morse_set_dataSizeFrom(bytes);
 
 	// size[bytes[bytes_cnt]-65]: number of dots to send including pause dots
-
 	if( bytes_cnt < MAX_DATA_SIZE)
 	{
 
@@ -121,25 +128,33 @@ void morse_send_bytes(uint8_t * bytes)
 		//if Capital Alphabet letter
 		if(bytes[bytes_cnt] >= 'A' && bytes[bytes_cnt] <= 'Z')
 		{
-			conv_index = 53;
+			conv_index = 52;
 		}
 
 		//if numbers
 		if(bytes[bytes_cnt] >= '0' && bytes[bytes_cnt] <= '9')
 		{
-			conv_index = 46;
+			conv_index = 45;
 		}
 
 		//if Capital Alphabet letter
 		if(bytes[bytes_cnt] == ',' )
 		{
-			conv_index = 43;
+			conv_index = 42;
 		}
 
 		//if Capital Alphabet letter
 		if(bytes[bytes_cnt] == '.' )
 		{
-			conv_index = 46;
+			conv_index = 45;
+		}
+
+		if(bytes[bytes_cnt] == ' ' )
+		{
+			dot_cnt = 0;
+			bytes_cnt++;
+			morse_send_dots(4,LOW);
+			return;
 		}
 
 		volatile uint8_t total_dots = size[bytes[bytes_cnt]-conv_index];

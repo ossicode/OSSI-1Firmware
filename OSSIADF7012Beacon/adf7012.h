@@ -8,8 +8,7 @@
 #ifndef ADF7012_H_
 #define ADF7012_H_
 
-#include "msp430x21x2.h"
-#include "util.h"
+#include "ossibeacon.h"
 #include "printf.h"
 
 // MSP430F2132 pin mapping

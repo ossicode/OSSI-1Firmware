@@ -8,12 +8,12 @@
 #include "system.h"
 
 
-void disable_int_wdt(void)
+void int_wdt_disable(void)
 {
 	WDTCTL = WDTPW + WDTHOLD;		// Stop watchdog timer
 }
 
-void config_clock(void)
+void clock_setup(void)
 {
 	// default: MCLK = SMCLK = DCO ~ 1.2MHz
 	// set DCO speed to calibrated 1MHz
@@ -21,22 +21,29 @@ void config_clock(void)
 	DCOCTL = CALDCO_1MHZ;
 }
 
-void init_IO(void)
+void IO_setup(void)
 {
-	// Ext Watchdog Pin init
-	P2DIR |= BIT2;
+	// general IO init
+	// TODO: set unused pins!!!
+
 	IO_DIRECTION(LED,OUTPUT);
 	IO_SET(LED,LOW);
 
 }
 
-void rst_ext_wdt(void)
+void ext_wdt_setup(void)
 {
-	P2OUT &= ~BIT2; // default WDI = LOW
+	IO_DIRECTION(EXTWDT,OUTPUT);
+}
+
+void ext_wdt_rst(void)
+{
+	//LOW-HIGH-LOW
+	IO_SET(EXTWDT,LOW);
 	delay_ms(1);
-	P2OUT |= BIT2;
+	IO_SET(EXTWDT,HIGH);
 	delay_ms(1);
-	P2OUT &= ~BIT2;
+	IO_SET(EXTWDT,LOW);
 }
 
 

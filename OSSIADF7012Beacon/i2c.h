@@ -8,8 +8,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
-#include "msp430x21x2.h"
-#include "util.h"
+#include "ossibeacon.h"
 
 void i2c_set_readyFlag(void);
 void i2c_clear_readyFlag(void);

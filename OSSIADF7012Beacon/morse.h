@@ -8,13 +8,10 @@
 #ifndef MORSE_H_
 #define MORSE_H_
 
-
-#include "msp430x21x2.h"
-#include "util.h"
+#include "ossibeacon.h"
 #include "adf7012.h"
-#include "system.h"
 
-#define MAX_DATA_SIZE 59
+//#define MAX_DATA_SIZE 59
 
 void morse_set_sendFlag(void);
 void morse_clear_sendFlag(void);

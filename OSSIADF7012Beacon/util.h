@@ -8,17 +8,11 @@
 #ifndef GLOBAL_H_
 #define GLOBAL_H_
 
+#include "ossitypes.h"
 
 // Macros for turning on and off the LEDs (for testing only)
 enum {FALSE = 0, TRUE = 1};
 #define _BV(bit) (1<<(bit))
-
-typedef unsigned char       uint8_t;
-typedef signed char         int8_t;
-typedef unsigned short int  uint16_t;
-typedef signed short int    int16_t;
-typedef unsigned long int   uint32_t;
-typedef signed long int     int32_t;
 
 //macros for IO config (with preprocessor abuse)
 #define st(x) do{x} while(__LINE__ == -1)
